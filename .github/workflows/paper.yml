@@ -1,0 +1,30 @@
+name: paper
+on:
+  push:
+    paths: ['paper/**', '.github/workflows/paper.yml']
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PDF
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: paper
+      - name: HTML
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq pandoc
+          cd paper
+          sed -n '/\\begin{abstract}/,/\\end{abstract}/p' main.tex | sed '1d;$d' > abstract.tex
+          pandoc abstract.tex -f latex -t html --mathjax -o abstract.html
+          sed '/\\begin{abstract}/,/\\end{abstract}/d' main.tex > body.tex
+          pandoc body.tex -f latex -t html --mathjax --citeproc --bibliography refs.bib -o paper.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paper
+          path: |
+            paper/main.pdf
+            paper/paper.html
+            paper/abstract.html

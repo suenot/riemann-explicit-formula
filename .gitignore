@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+paper/main.pdf
+paper/numbers.tex
+CODEX_REPORT.md
