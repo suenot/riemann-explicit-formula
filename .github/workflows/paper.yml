@@ -20,7 +20,8 @@ jobs:
           sed -n '/\\begin{abstract}/,/\\end{abstract}/p' main.tex | sed '1d;$d' > abstract.tex
           pandoc abstract.tex -f latex -t html --mathjax -o abstract.html
           sed '/\\begin{abstract}/,/\\end{abstract}/d' main.tex > body.tex
-          pandoc body.tex -f latex -t html --mathjax --citeproc --bibliography refs.bib -o paper.html
+          pandoc body.tex -f latex -t html --mathjax --citeproc --bibliography refs.bib --number-sections -o paper.html
+          sed -i 's/>\[eq:explicit\]</>(1)</g' paper.html
       - uses: actions/upload-artifact@v4
         with:
           name: paper

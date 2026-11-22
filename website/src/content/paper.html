@@ -1,0 +1,572 @@
+<h1 id="introduction">Introduction</h1>
+<p>The von Mangoldt form of Riemann’s explicit formula states, for <span
+class="math inline">\(x&gt;1\)</span> not a prime power, <span
+class="math display">\[\psi(x)=\sum_{n\le
+x}\Lambda(n)=x-\sum_{\rho}\frac{x^{\rho}}{\rho}-\log(2\pi)-\tfrac12\log(1-x^{-2}),
+\label{eq:explicit}\]</span> where <span
+class="math inline">\(\rho\)</span> runs over the nontrivial zeros of
+<span class="math inline">\(\zeta(s)\)</span> in order of increasing
+<span class="math inline">\(|\Im\rho|\)</span> <span class="citation"
+data-cites="mazurstein2016 kedlaya-ant">(Mazur and Stein 2016; Kedlaya,
+n.d.)</span>. If <span
+class="math inline">\(\rho=\tfrac12+i\gamma\)</span>, the pair <span
+class="math inline">\(\rho,\bar\rho\)</span> contributes a wave <span
+class="math inline">\(2\sqrt{x}\,|\rho|^{-1}\cos(\gamma\log
+x-\arg\rho)\)</span>. In the variable <span class="math inline">\(u=\log
+x\)</span> every zero is a pure frequency <span
+class="math inline">\(\gamma\)</span>. The formula is therefore a
+Fourier-type expansion of the prime staircase, and by Weil’s form of the
+explicit formula <span class="citation" data-cites="weil1952">(Weil
+1952)</span> the roles of primes and zeros can be exchanged.</p>
+<p>This duality is classical. Our aim is a compact, reproducible set of
+numerical checks that a reader can rerun on a laptop in seconds,
+together with the measurements that make each claim quantitative:
+convergence of the wave sum, the size of the Gibbs overshoot and how
+tapers remove it, the resolution with which primes reveal zeros, the
+depth of the dips with which zeros reveal primes, Bohr’s extraction of
+single Dirichlet coefficients, and the behaviour of Riemann’s <span
+class="math inline">\(R(x)\)</span>. Related numerical studies include
+Riesel and Göhl <span class="citation"
+data-cites="rieselgohl1970">(Riesel and Göhl 1970)</span>, Odlyzko <span
+class="citation" data-cites="odlyzko1987">(Odlyzko 1987)</span>, Baillie
+<span class="citation" data-cites="baillie2011">(Baillie 2011)</span>
+and the physics literature on prime-power spectra <span class="citation"
+data-cites="sakhr2003 main1998">(Sakhr, Bhaduri, and Zyl 2003; Main et
+al. 1998)</span>.</p>
+<p>All experiments use the first 1000 zero ordinates, <span
+class="math inline">\(\gamma_1=14.1347\)</span> to <span
+class="math inline">\(\gamma_{1000}=G=1419.4225\)</span>, cached in the
+repository. The zeros used lie on the critical line, which is verified
+far beyond this height <span class="citation"
+data-cites="platttrudgian2021">(Platt and Trudgian 2021)</span>. Exact
+definitions are collected in <code>paper/FORMULAS.md</code>.</p>
+<h1 id="waves-rebuilding-psix-from-zeros">Waves: rebuilding <span
+class="math inline">\(\psi(x)\)</span> from zeros</h1>
+<p>We evaluate the truncation <span
+class="math inline">\(\psi_N(x)\)</span> of <a href="#eq:explicit"
+data-reference-type="eqref"
+data-reference="eq:explicit">[eq:explicit]</a> keeping the first <span
+class="math inline">\(N\)</span> zero pairs and compare it with the
+midpoint value <span class="math inline">\(\psi_0(x)\)</span>. At <span
+class="math inline">\(x=19.5\)</span>, where <span
+class="math inline">\(\psi(19.5)=\log(2^4
+3^2\cdot5\cdot7\cdot11\cdot13\cdot17\cdot19)=19.2657\)</span>:</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">zero pairs <span
+class="math inline">\(N\)</span></th>
+<th style="text-align: right;"><span
+class="math inline">\(\psi_N(19.5)\)</span></th>
+<th style="text-align: right;">absolute error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">17.6634</td>
+<td style="text-align: right;">1.6022</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">18.6306</td>
+<td style="text-align: right;">0.6350</td>
+</tr>
+<tr>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">19.4876</td>
+<td style="text-align: right;">0.2219</td>
+</tr>
+<tr>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">19.2464</td>
+<td style="text-align: right;">0.0193</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Convergence is not monotone: with 30 zeros the estimate overshoots
+the true value. Each wave has period <span
+class="math inline">\(2\pi/\gamma_k\)</span> in <span
+class="math inline">\(\log x\)</span> and envelope <span
+class="math inline">\(2\sqrt{x}/|\rho_k|\)</span>, so higher zeros add
+finer and weaker detail. Over the fixed test grid the maximum error at
+<span class="math inline">\(N=1000\)</span> is <span
+class="math inline">\(0.124\)</span>.</p>
+<h1 id="the-gibbs-phenomenon-and-smoothing">The Gibbs phenomenon and
+smoothing</h1>
+<p>A sharp truncation of <a href="#eq:explicit"
+data-reference-type="eqref"
+data-reference="eq:explicit">[eq:explicit]</a> rings at every jump of
+<span class="math inline">\(\psi\)</span>, as a truncated Fourier series
+does at a discontinuity. For a classical Fourier series the overshoot
+tends to <span
+class="math inline">\(100(\mathrm{Si}(\pi)/\pi-\tfrac12)=8.949\%\)</span>
+of the jump. We measure the overshoot above the plateau <span
+class="math inline">\(\psi(p)\)</span> to the right of <span
+class="math inline">\(p=7,11,13\)</span>, as a percentage of the jump
+<span class="math inline">\(\log p\)</span>, and compare four weights
+<span class="math inline">\(w_k\)</span> with <span
+class="math inline">\(r=\gamma_k/\gamma_N\)</span>: raw (<span
+class="math inline">\(1\)</span>), Fejér (<span
+class="math inline">\(1-r\)</span>), Gaussian (<span
+class="math inline">\(e^{-r^2}\)</span>) and Hann (<span
+class="math inline">\((1+\cos\pi r)/2\)</span>). Mean absolute error
+(MAE) is taken on <span
+class="math inline">\(x=1.5,1.55,\dots,50\)</span>.</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">weight (<span
+class="math inline">\(N=1000\)</span>)</th>
+<th style="text-align: right;">worst overshoot, %</th>
+<th style="text-align: right;">MAE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">raw</td>
+<td style="text-align: right;">9.152</td>
+<td style="text-align: right;">0.0281</td>
+</tr>
+<tr>
+<td style="text-align: left;">Fejér</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.0450</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gaussian</td>
+<td style="text-align: right;">2.213</td>
+<td style="text-align: right;">0.0143</td>
+</tr>
+<tr>
+<td style="text-align: left;">Hann</td>
+<td style="text-align: right;">0.637</td>
+<td style="text-align: right;">0.0171</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The raw overshoot, <span class="math inline">\(8.9\)</span>–<span
+class="math inline">\(9.2\%\)</span> across the three primes, is the
+Fourier value. Fejér weights remove it at the cost of the largest MAE;
+the Hann taper keeps both small and first meets the joint criterion (MAE
+<span class="math inline">\(\le0.25\)</span>, overshoot <span
+class="math inline">\(\le2\%\)</span>) at <span
+class="math inline">\(N=100\)</span>. Gibbs phenomena for related
+orthogonal expansions are studied in <span class="citation"
+data-cites="davishagelstein2022">(Davis and Hagelstein 2022)</span>.</p>
+<h1 id="primes-reveal-the-zeros">Primes reveal the zeros</h1>
+<p>We reverse the direction. With a Hann window <span
+class="math inline">\(W\)</span> on <span class="math inline">\(u=\log
+n\in[\log2,\log X]\)</span> we form <span
+class="math display">\[S_X(t)=\Bigl|\sum_{n\le X}\frac{\Lambda(n)}{\sqrt
+n}W(\log n)\cos(t\log n)-\int e^{u/2}W(u)\cos(tu)\,du\Bigr|,\]</span>
+the windowed cosine spectrum of the prime powers with the smooth density
+removed, and pick its ten largest peaks in <span
+class="math inline">\(t\in[10,50]\)</span>.</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">cutoff <span
+class="math inline">\(X\)</span></th>
+<th style="text-align: right;">first peak</th>
+<th style="text-align: right;">zeros resolved</th>
+<th style="text-align: right;">max error</th>
+<th style="text-align: right;">spacing <span
+class="math inline">\(2\pi/\log(X/2)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><span
+class="math inline">\(10^3\)</span></td>
+<td style="text-align: right;">14.13457</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0.0293</td>
+<td style="text-align: right;">1.011</td>
+</tr>
+<tr>
+<td style="text-align: right;"><span
+class="math inline">\(10^4\)</span></td>
+<td style="text-align: right;">14.13480</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0027</td>
+<td style="text-align: right;">0.738</td>
+</tr>
+<tr>
+<td style="text-align: right;"><span
+class="math inline">\(10^5\)</span></td>
+<td style="text-align: right;">14.13472</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.00069</td>
+<td style="text-align: right;">0.581</td>
+</tr>
+<tr>
+<td style="text-align: right;"><span
+class="math inline">\(10^6\)</span></td>
+<td style="text-align: right;">14.13474</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.00080</td>
+<td style="text-align: right;">0.479</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The peaks sit at the zero ordinates (<span
+class="math inline">\(\gamma_1=14.13473\)</span>, <span
+class="math inline">\(\gamma_2=21.02204\)</span>). The resolution is set
+by the length of the record in <span class="math inline">\(\log
+n\)</span>: two zeros closer than about <span
+class="math inline">\(2\pi/\log(X/2)\)</span> cannot be separated, which
+is the usual time–frequency limit of spectral analysis. At <span
+class="math inline">\(X=10^3\)</span> the third zero is not
+resolved.</p>
+<h1 id="zeros-reveal-the-primes">Zeros reveal the primes</h1>
+<p>Now we use the zeros alone. Let <span
+class="math display">\[F(t)=\sum_{k=1}^{1000}W_k\cos(\gamma_k t),\qquad
+W_k=\tfrac12\bigl(1+\cos(\pi\gamma_k/G)\bigr).\]</span> By Landau’s
+theorem <span class="citation" data-cites="landau1912">(Landau
+1912)</span>, <span class="math inline">\(\sum_{0&lt;\gamma\le
+T}\cos(\gamma\log n)\sim -\frac{T}{2\pi}\frac{\Lambda(n)}{\sqrt
+n}\)</span> for fixed <span class="math inline">\(n\)</span>, the linear
+term vanishing unless <span class="math inline">\(n\)</span> is a prime
+power. The taper replaces <span class="math inline">\(T\)</span> by
+<span class="math inline">\(\int_0^G W=G/2\)</span>, so <span
+class="math inline">\(F\)</span> should have a dip at <span
+class="math inline">\(t=\log p^a\)</span> of depth <span
+class="math inline">\(\frac{G}{4\pi}\frac{\log p}{\sqrt{n}}\)</span> and
+no dip at other integers. We measure the depth at <span
+class="math inline">\(t=\log n\)</span> against the local level <span
+class="math inline">\(\mathrm{med}_+\{F(\log n\pm
+d):d=0.04,0.05,0.06\}\)</span> (the upper median of the six values) and
+report the normalized depth <span
+class="math inline">\(\mathrm{depth}\cdot\sqrt n/(G/4\pi)\)</span>.</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: right;"><span
+class="math inline">\(n\)</span></th>
+<th style="text-align: right;">normalized depth</th>
+<th style="text-align: right;"><span class="math inline">\(\log
+p\)</span></th>
+<th style="text-align: right;">relative error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0.6935</td>
+<td style="text-align: right;">0.6931</td>
+<td style="text-align: right;"><span
+class="math inline">\(0.05\%\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.6935</td>
+<td style="text-align: right;">0.6931</td>
+<td style="text-align: right;"><span
+class="math inline">\(0.05\%\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0.6939</td>
+<td style="text-align: right;">0.6931</td>
+<td style="text-align: right;"><span
+class="math inline">\(0.11\%\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1.0990</td>
+<td style="text-align: right;">1.0986</td>
+<td style="text-align: right;"><span
+class="math inline">\(0.04\%\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">1.0981</td>
+<td style="text-align: right;">1.0986</td>
+<td style="text-align: right;"><span
+class="math inline">\(-0.05\%\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">2.5661</td>
+<td style="text-align: right;">2.5649</td>
+<td style="text-align: right;"><span
+class="math inline">\(0.05\%\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">3.4333</td>
+<td style="text-align: right;">3.4340</td>
+<td style="text-align: right;"><span
+class="math inline">\(-0.02\%\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.0005</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0009</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">0.0010</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">0.0013</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Over all seventeen prime powers up to 31 the agreement is within
+<span class="math inline">\(0.2\%\)</span> (worst case <span
+class="math inline">\(n=16\)</span>), every composite up to 30 has
+normalized depth below <span class="math inline">\(0.004\)</span>, and
+the dips are located within <span class="math inline">\(10^{-4}\)</span>
+of <span class="math inline">\(\log n\)</span>. Powers of the same prime
+(<span class="math inline">\(2,4,8,16\)</span>) have the same normalized
+depth <span class="math inline">\(\log 2\)</span>, exactly the jump of
+<span class="math inline">\(\psi\)</span> at those points. With fewer
+zeros the dips widen in proportion to <span
+class="math inline">\(2\pi/G\)</span>, the mirror image of the
+resolution limit of Section 4. The two experiments together are a
+numerical form of Weil’s explicit formula: the spectrum of the primes is
+the set of zeros, and the spectrum of the zeros is the set of <span
+class="math inline">\(\log p^a\)</span> weighted by <span
+class="math inline">\(\Lambda\)</span>.</p>
+<h1 id="bohr-coefficients-one-integer-at-a-time">Bohr coefficients: one
+integer at a time</h1>
+<p>On <span class="math inline">\(\Re s=2\)</span> the series <span
+class="math inline">\(\zeta(s)=\sum n^{-s}\)</span> converges
+absolutely, and each <span class="math inline">\(n\)</span> contributes
+the frequency <span class="math inline">\(\log n\)</span> with amplitude
+<span class="math inline">\(n^{-2}\)</span>. Bohr’s mean <span
+class="citation" data-cites="bohr1925">(Bohr 1925)</span> <span
+class="math display">\[C_T(n)=\frac1T\int_0^T\zeta(2+it)\,n^{it}\,dt\;\longrightarrow\;n^{-2}\]</span>
+extracts it. For <span
+class="math inline">\(n\in\{2,\dots,7,12\}\)</span> the maximum error
+<span class="math inline">\(|C_T(n)-n^{-2}|\)</span> falls from <span
+class="math inline">\(0.0244\)</span> (<span
+class="math inline">\(T=100\)</span>) to <span
+class="math inline">\(0.0047\)</span> (<span
+class="math inline">\(T=400\)</span>) and <span
+class="math inline">\(0.0014\)</span> (<span
+class="math inline">\(T=1600\)</span>). Unique factorization appears as
+the multiplicativity <span
+class="math inline">\(6^{-2}=2^{-2}3^{-2}\)</span>: the finite-time
+discrepancy <span class="math inline">\(|C_T(6)-C_T(2)C_T(3)|\)</span>
+is <span class="math inline">\(7.5\times10^{-4}\)</span> at <span
+class="math inline">\(T=1600\)</span>. Because <span
+class="math inline">\(\log2\)</span> and <span
+class="math inline">\(\log3\)</span> are linearly independent over <span
+class="math inline">\(\mathbb{Q}\)</span>, the frequencies <span
+class="math inline">\(\log p\)</span> behave as independent phases and
+every <span class="math inline">\(\log n\)</span> is an integer
+combination of them. This is why the zeros in Section 5 see only prime
+powers: <span class="math inline">\(\log 6=\log2+\log3\)</span> carries
+no new base frequency.</p>
+<h1 id="counting-primes-rx-and-the-zero-correction">Counting primes:
+<span class="math inline">\(R(x)\)</span> and the zero correction</h1>
+<p>Riemann’s function <span
+class="math inline">\(R(x)=\sum_{m\ge1}\frac{\mu(m)}{m}\mathrm{Li}(x^{1/m})\)</span>,
+computed by Gram’s series, is much closer to <span
+class="math inline">\(\pi(x)\)</span> than <span
+class="math inline">\(\mathrm{Li}(x)\)</span>:</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: right;"><span
+class="math inline">\(x\)</span></th>
+<th style="text-align: right;"><span
+class="math inline">\(\pi(x)\)</span></th>
+<th style="text-align: right;"><span
+class="math inline">\(R(x)\)</span></th>
+<th style="text-align: right;"><span
+class="math inline">\(\mathrm{Li}(x)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><span
+class="math inline">\(10^2\)</span></td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">25.66</td>
+<td style="text-align: right;">30.13</td>
+</tr>
+<tr>
+<td style="text-align: right;"><span
+class="math inline">\(10^3\)</span></td>
+<td style="text-align: right;">168</td>
+<td style="text-align: right;">168.36</td>
+<td style="text-align: right;">177.61</td>
+</tr>
+<tr>
+<td style="text-align: right;"><span
+class="math inline">\(10^4\)</span></td>
+<td style="text-align: right;">1229</td>
+<td style="text-align: right;">1226.93</td>
+<td style="text-align: right;">1246.14</td>
+</tr>
+<tr>
+<td style="text-align: right;"><span
+class="math inline">\(10^5\)</span></td>
+<td style="text-align: right;">9592</td>
+<td style="text-align: right;">9587.43</td>
+<td style="text-align: right;">9629.81</td>
+</tr>
+<tr>
+<td style="text-align: right;"><span
+class="math inline">\(10^6\)</span></td>
+<td style="text-align: right;">78498</td>
+<td style="text-align: right;">78527.40</td>
+<td style="text-align: right;">78627.55</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A tempting refinement subtracts the zero terms, <span
+class="math inline">\(H_N(x)=R(x)-2\sum_{k\le
+N}\Re\,R(x^{\rho_k})\)</span>. It is not a reliable approximation: at
+<span class="math inline">\(x=1000\)</span> the error moves from <span
+class="math inline">\(+0.138\)</span> with 10 zero pairs to <span
+class="math inline">\(-0.241\)</span> with 100, and Grobner proves that
+this series diverges under height ordering <span class="citation"
+data-cites="grobner2026">(Grobner 2026)</span>. The correct route
+corrects <span class="math inline">\(J(x)=\sum_{p^a\le x}1/a\)</span> by
+the explicit formula and then applies Möbius inversion. At the jump
+<span class="math inline">\(x=7\)</span> this gives <span
+class="math inline">\(3.4943\)</span> with 100 zero pairs and <span
+class="math inline">\(3.5001\)</span> with 1000, converging to the
+midpoint value <span class="math inline">\(3.5\)</span>. Error terms of
+truncated explicit formulas are analysed in <span class="citation"
+data-cites="cullyhugilljohnston2021 doron1995">(Cully-Hugill and
+Johnston 2021; Doron 1995)</span>.</p>
+<h1 id="discussion">Discussion</h1>
+<p>The experiments show the explicit formula as an exact two-way
+spectral pair with a hard resolution limit on each side: a finite list
+of primes blurs the zeros, and a finite list of zeros blurs the primes.
+The same limit governs any spectral analysis of a finite time series,
+which is the practical lesson we draw for applied work. Nothing here
+bears on the truth of the Riemann hypothesis; all computations use zeros
+already known to lie on the critical line.</p>
+<h1 class="unnumbered" id="reproducibility">Reproducibility</h1>
+<p>Code, cached zeros and results are at <a
+href="https://github.com/suenot/riemann-explicit-formula"
+class="uri">https://github.com/suenot/riemann-explicit-formula</a>.
+Three commands reproduce and check everything:</p>
+<ul>
+<li><p><code>python scripts/run_all.py</code> regenerates
+<code>results/results.json</code> in about 12 seconds, with a bitwise
+identical hash on repeated runs;</p></li>
+<li><p><code>python -m pytest -q</code> checks the experiments;</p></li>
+<li><p><code>python scripts/check_paper_numbers.py</code> verifies the
+numbers mapped to the paper.</p></li>
+</ul>
+<div id="refs" class="references csl-bib-body hanging-indent"
+data-entry-spacing="0" role="list">
+<div id="ref-baillie2011" class="csl-entry" role="listitem">
+Baillie, Robert. 2011. <span>“Experiments with Zeta Zeros and
+<span>Perron</span>’s Formula.”</span> arXiv:1103.6226. <a
+href="https://arxiv.org/abs/1103.6226">https://arxiv.org/abs/1103.6226</a>.
+</div>
+<div id="ref-bohr1925" class="csl-entry" role="listitem">
+Bohr, Harald. 1925. <span>“<span class="nocase">Zur Theorie der
+fastperiodischen Funktionen. <span>I</span>. Eine Verallgemeinerung der
+Theorie der Fourierreihen</span>.”</span> <em>Acta Mathematica</em> 45:
+29–127. <a
+href="https://doi.org/10.1007/BF02395468">https://doi.org/10.1007/BF02395468</a>.
+</div>
+<div id="ref-cullyhugilljohnston2021" class="csl-entry" role="listitem">
+Cully-Hugill, Michaela, and Daniel R. Johnston. 2021. <span>“On the
+Error Term in the Explicit Formula of <span class="nocase">Riemann–von
+Mangoldt</span>.”</span> arXiv:2111.10001. <a
+href="https://arxiv.org/abs/2111.10001">https://arxiv.org/abs/2111.10001</a>.
+</div>
+<div id="ref-davishagelstein2022" class="csl-entry" role="listitem">
+Davis, John M., and Paul Hagelstein. 2022. <span>“<span>Gibbs</span>
+Phenomena for Some Classical Orthogonal Polynomials.”</span> <em>Journal
+of Mathematical Analysis and Applications</em> 505 (1): 125574. <a
+href="https://doi.org/10.1016/j.jmaa.2021.125574">https://doi.org/10.1016/j.jmaa.2021.125574</a>.
+</div>
+<div id="ref-doron1995" class="csl-entry" role="listitem">
+Doron, Eyal. 1995. <span>“Do Spectral Trace Formulae Converge?”</span>
+arXiv:chao-dyn/9502025. <a
+href="https://arxiv.org/abs/chao-dyn/9502025">https://arxiv.org/abs/chao-dyn/9502025</a>.
+</div>
+<div id="ref-grobner2026" class="csl-entry" role="listitem">
+Grobner, Harald. 2026. <span>“On Divergence Related to <span
+class="nocase">Riemann–von Mangoldt</span>’s Explicit Formula of the
+Prime-Counting Function.”</span> arXiv:2609.02713v2. <a
+href="https://arxiv.org/abs/2609.02713v2">https://arxiv.org/abs/2609.02713v2</a>.
+</div>
+<div id="ref-kedlaya-ant" class="csl-entry" role="listitem">
+Kedlaya, Kiran S. n.d. <span>“<span class="nocase">von Mangoldt</span>’s
+Formula.”</span> Notes on Analytic Number Theory. <a
+href="https://kskedlaya.org/ant/chap-von-mangoldt.html">https://kskedlaya.org/ant/chap-von-mangoldt.html</a>.
+</div>
+<div id="ref-landau1912" class="csl-entry" role="listitem">
+Landau, Edmund. 1912. <span>“<span class="nocase"><span>Ü</span>ber die
+Nullstellen der Zetafunktion</span>.”</span> <em>Mathematische
+Annalen</em> 71 (4): 548–64. <a
+href="https://doi.org/10.1007/BF01456808">https://doi.org/10.1007/BF01456808</a>.
+</div>
+<div id="ref-main1998" class="csl-entry" role="listitem">
+Main, Jörg, Vladimir A. Mandelshtam, Günter Wunner, and Howard S.
+Taylor. 1998. <span>“Harmonic Inversion as a General Method for Periodic
+Orbit Quantization.”</span> <em>Nonlinearity</em> 11 (4): 1015–35. <a
+href="https://doi.org/10.1088/0951-7715/11/4/014">https://doi.org/10.1088/0951-7715/11/4/014</a>.
+</div>
+<div id="ref-mazurstein2016" class="csl-entry" role="listitem">
+Mazur, Barry, and William Stein. 2016. <em>Prime Numbers and the
+<span>Riemann</span> Hypothesis</em>. Cambridge University Press. <a
+href="https://doi.org/10.1017/CBO9781316182277">https://doi.org/10.1017/CBO9781316182277</a>.
+</div>
+<div id="ref-odlyzko1987" class="csl-entry" role="listitem">
+Odlyzko, Andrew M. 1987. <span>“On the Distribution of Spacings Between
+Zeros of the Zeta Function.”</span> <em>Mathematics of Computation</em>
+48 (177): 273–308. <a
+href="https://doi.org/10.1090/S0025-5718-1987-0866115-0">https://doi.org/10.1090/S0025-5718-1987-0866115-0</a>.
+</div>
+<div id="ref-platttrudgian2021" class="csl-entry" role="listitem">
+Platt, Dave, and Tim Trudgian. 2021. <span>“The <span>Riemann</span>
+Hypothesis Is True up to <span><span
+class="math inline">\(3\cdot10^{12}\)</span></span>.”</span>
+<em>Bulletin of the London Mathematical Society</em> 53 (3): 792–97. <a
+href="https://doi.org/10.1112/blms.12460">https://doi.org/10.1112/blms.12460</a>.
+</div>
+<div id="ref-rieselgohl1970" class="csl-entry" role="listitem">
+Riesel, Hans, and Gunnar Göhl. 1970. <span>“Some Calculations Related to
+<span>Riemann</span>’s Prime Number Formula.”</span> <em>Mathematics of
+Computation</em> 24 (112): 969–83. <a
+href="https://doi.org/10.1090/S0025-5718-1970-0277489-3">https://doi.org/10.1090/S0025-5718-1970-0277489-3</a>.
+</div>
+<div id="ref-sakhr2003" class="csl-entry" role="listitem">
+Sakhr, Jamal, Rajat K. Bhaduri, and Brandon P. van Zyl. 2003.
+<span>“Zeta Function Zeros, Powers of Primes, and Quantum Chaos.”</span>
+<em>Physical Review E</em> 68: 026206. <a
+href="https://doi.org/10.1103/PhysRevE.68.026206">https://doi.org/10.1103/PhysRevE.68.026206</a>.
+</div>
+<div id="ref-weil1952" class="csl-entry" role="listitem">
+Weil, André. 1952. <span>“Sur Les <span class="nocase">"formules
+explicites"</span> de La Th<span>é</span>orie Des Nombres
+Premiers.”</span> <em>Meddelanden Fr<span>å</span>n Lunds Universitets
+Matematiska Seminarium</em>, 252–65.
+</div>
+</div>
