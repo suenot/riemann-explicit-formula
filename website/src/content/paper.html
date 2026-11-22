@@ -1,4 +1,5 @@
-<h1 id="introduction">Introduction</h1>
+<h1 data-number="1" id="introduction"><span
+class="header-section-number">1</span> Introduction</h1>
 <p>The von Mangoldt form of Riemann’s explicit formula states, for <span
 class="math inline">\(x&gt;1\)</span> not a prime power, <span
 class="math display">\[\psi(x)=\sum_{n\le
@@ -40,12 +41,13 @@ repository. The zeros used lie on the critical line, which is verified
 far beyond this height <span class="citation"
 data-cites="platttrudgian2021">(Platt and Trudgian 2021)</span>. Exact
 definitions are collected in <code>paper/FORMULAS.md</code>.</p>
-<h1 id="waves-rebuilding-psix-from-zeros">Waves: rebuilding <span
+<h1 data-number="2" id="waves-rebuilding-psix-from-zeros"><span
+class="header-section-number">2</span> Waves: rebuilding <span
 class="math inline">\(\psi(x)\)</span> from zeros</h1>
 <p>We evaluate the truncation <span
 class="math inline">\(\psi_N(x)\)</span> of <a href="#eq:explicit"
 data-reference-type="eqref"
-data-reference="eq:explicit">[eq:explicit]</a> keeping the first <span
+data-reference="eq:explicit">(1)</a> keeping the first <span
 class="math inline">\(N\)</span> zero pairs and compare it with the
 midpoint value <span class="math inline">\(\psi_0(x)\)</span>. At <span
 class="math inline">\(x=19.5\)</span>, where <span
@@ -94,11 +96,12 @@ class="math inline">\(2\sqrt{x}/|\rho_k|\)</span>, so higher zeros add
 finer and weaker detail. Over the fixed test grid the maximum error at
 <span class="math inline">\(N=1000\)</span> is <span
 class="math inline">\(0.124\)</span>.</p>
-<h1 id="the-gibbs-phenomenon-and-smoothing">The Gibbs phenomenon and
+<h1 data-number="3" id="the-gibbs-phenomenon-and-smoothing"><span
+class="header-section-number">3</span> The Gibbs phenomenon and
 smoothing</h1>
 <p>A sharp truncation of <a href="#eq:explicit"
 data-reference-type="eqref"
-data-reference="eq:explicit">[eq:explicit]</a> rings at every jump of
+data-reference="eq:explicit">(1)</a> rings at every jump of
 <span class="math inline">\(\psi\)</span>, as a truncated Fourier series
 does at a discontinuity. For a classical Fourier series the overshoot
 tends to <span
@@ -158,7 +161,8 @@ class="math inline">\(\le2\%\)</span>) at <span
 class="math inline">\(N=100\)</span>. Gibbs phenomena for related
 orthogonal expansions are studied in <span class="citation"
 data-cites="davishagelstein2022">(Davis and Hagelstein 2022)</span>.</p>
-<h1 id="primes-reveal-the-zeros">Primes reveal the zeros</h1>
+<h1 data-number="4" id="primes-reveal-the-zeros"><span
+class="header-section-number">4</span> Primes reveal the zeros</h1>
 <p>We reverse the direction. With a Hann window <span
 class="math inline">\(W\)</span> on <span class="math inline">\(u=\log
 n\in[\log2,\log X]\)</span> we form <span
@@ -225,7 +229,8 @@ class="math inline">\(2\pi/\log(X/2)\)</span> cannot be separated, which
 is the usual time–frequency limit of spectral analysis. At <span
 class="math inline">\(X=10^3\)</span> the third zero is not
 resolved.</p>
-<h1 id="zeros-reveal-the-primes">Zeros reveal the primes</h1>
+<h1 data-number="5" id="zeros-reveal-the-primes"><span
+class="header-section-number">5</span> Zeros reveal the primes</h1>
 <p>Now we use the zeros alone. Let <span
 class="math display">\[F(t)=\sum_{k=1}^{1000}W_k\cos(\gamma_k t),\qquad
 W_k=\tfrac12\bigl(1+\cos(\pi\gamma_k/G)\bigr).\]</span> By Landau’s
@@ -350,8 +355,9 @@ numerical form of Weil’s explicit formula: the spectrum of the primes is
 the set of zeros, and the spectrum of the zeros is the set of <span
 class="math inline">\(\log p^a\)</span> weighted by <span
 class="math inline">\(\Lambda\)</span>.</p>
-<h1 id="bohr-coefficients-one-integer-at-a-time">Bohr coefficients: one
-integer at a time</h1>
+<h1 data-number="6" id="bohr-coefficients-one-integer-at-a-time"><span
+class="header-section-number">6</span> Bohr coefficients: one integer at
+a time</h1>
 <p>On <span class="math inline">\(\Re s=2\)</span> the series <span
 class="math inline">\(\zeta(s)=\sum n^{-s}\)</span> converges
 absolutely, and each <span class="math inline">\(n\)</span> contributes
@@ -381,8 +387,10 @@ every <span class="math inline">\(\log n\)</span> is an integer
 combination of them. This is why the zeros in Section 5 see only prime
 powers: <span class="math inline">\(\log 6=\log2+\log3\)</span> carries
 no new base frequency.</p>
-<h1 id="counting-primes-rx-and-the-zero-correction">Counting primes:
-<span class="math inline">\(R(x)\)</span> and the zero correction</h1>
+<h1 data-number="7"
+id="counting-primes-rx-and-the-zero-correction"><span
+class="header-section-number">7</span> Counting primes: <span
+class="math inline">\(R(x)\)</span> and the zero correction</h1>
 <p>Riemann’s function <span
 class="math inline">\(R(x)=\sum_{m\ge1}\frac{\mu(m)}{m}\mathrm{Li}(x^{1/m})\)</span>,
 computed by Gram’s series, is much closer to <span
@@ -458,7 +466,8 @@ midpoint value <span class="math inline">\(3.5\)</span>. Error terms of
 truncated explicit formulas are analysed in <span class="citation"
 data-cites="cullyhugilljohnston2021 doron1995">(Cully-Hugill and
 Johnston 2021; Doron 1995)</span>.</p>
-<h1 id="discussion">Discussion</h1>
+<h1 data-number="8" id="discussion"><span
+class="header-section-number">8</span> Discussion</h1>
 <p>The experiments show the explicit formula as an exact two-way
 spectral pair with a hard resolution limit on each side: a finite list
 of primes blurs the zeros, and a finite list of zeros blurs the primes.
