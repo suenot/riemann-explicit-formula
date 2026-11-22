@@ -156,7 +156,12 @@ The experiments show the explicit formula as an exact two-way spectral pair with
 
 \section*{Reproducibility}
 
-Code, cached zeros and results are at \url{https://github.com/suenot/riemann-explicit-formula}. The command \texttt{python scripts/run\_all.py} regenerates \texttt{results/results.json} in about 12 seconds with a bitwise identical hash on repeated runs, \texttt{pytest} checks the experiments, and \texttt{scripts/check\_paper\_numbers.py} verifies the mapped numbers.
+Code, cached zeros and results are at \url{https://github.com/suenot/riemann-explicit-formula}. Three commands reproduce and check everything:
+\begin{itemize}
+\item \texttt{python scripts/run\_all.py} regenerates \texttt{results/results.json} in about 12 seconds, with a bitwise identical hash on repeated runs;
+\item \texttt{python -m pytest -q} checks the experiments;
+\item \texttt{python scripts/check\_paper\_numbers.py} verifies the numbers mapped to the paper.
+\end{itemize}
 
 \bibliographystyle{plain}
 \bibliography{refs}
