@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "riemann-explicit-formula",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "./dist" },
+  "routes": [
+    { "pattern": "riemann-explicit-formula.marketmaker.cc", "custom_domain": true }
+  ]
+}
